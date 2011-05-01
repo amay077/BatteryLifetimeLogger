@@ -1,5 +1,8 @@
 package com.amay077.android.batterylifetimelogger;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.amay077.android.logging.Log;
 
 import android.app.Activity;
@@ -9,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
 
 /**
  * 
@@ -17,11 +21,15 @@ import android.os.Bundle;
  *
  */
 public class MainActivity extends Activity {
+	private Handler handler = new Handler();
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        Log.i("onCreate", "called.");
 
         IntentFilter filter = new IntentFilter();
         
@@ -43,8 +51,8 @@ public class MainActivity extends Activity {
             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int status = intent.getIntExtra("status", 0);
                 int health = intent.getIntExtra("health", 0);
-                boolean present = intent.getBooleanExtra("present", false);
-                int level = intent.getIntExtra("level", 0);
+                final boolean present = intent.getBooleanExtra("present", false);
+                final int level = intent.getIntExtra("level", 0);
                 int scale = intent.getIntExtra("scale", 0);
                 int icon_small = intent.getIntExtra("icon-small", 0);
                 int plugged = intent.getIntExtra("plugged", 0);
@@ -116,6 +124,16 @@ public class MainActivity extends Activity {
                 Log.i("voltage", String.valueOf(voltage));
                 Log.i("temperature", String.valueOf(temperature));
                 Log.i("technology", technology);
+                
+                final SimpleDateFormat fmt = new SimpleDateFormat();
+                handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainActivity.this.setTitle(fmt.format(new Date(System.currentTimeMillis())) + ":" + String.valueOf(level));
+					}
+				});
+                
             }
         }
     };

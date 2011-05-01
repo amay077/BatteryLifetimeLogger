@@ -18,21 +18,17 @@ import com.google.code.microlog4android.appender.LogCatAppender;
 import com.google.code.microlog4android.format.PatternFormatter;
 
 public class Log {
+	static final private boolean logEnabled = true;
+	static final private String APP_NAME = "batterylifetimelogger";
 
-	static private Logger logger = LoggerFactory.getLogger();
-	static private String LOGFILE_PATH = "/batterylifetimelogger/log"
-		+ DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + ".txt";
+	static final private Logger logger = LoggerFactory.getLogger();
+	static final private String LOGFILE_PATH = "/" + APP_NAME + "/log" + DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + ".txt";
 	static private boolean isInitialized = false;
-	static private boolean logEnabled = false;
-//	static private boolean isInitializedAnalytics = false;
 
 	static private void initialize() {
-		if (!logEnabled)
-			return;
+		if (!logEnabled) return;
+		if (isInitialized) return;
 
-		if (isInitialized)
-			return;
-		
 		File sdCardDir = Environment.getExternalStorageDirectory();
 		Uri logUri = Uri.withAppendedPath(Uri.fromFile(sdCardDir), LOGFILE_PATH);
 		String logFullPath = logUri.getPath();
@@ -57,23 +53,9 @@ public class Log {
 		fileAppender.setFormatter(formatter);
 		logger.addAppender(fileAppender);
 
-		logger.setClientID("HexRinger");
+		logger.setClientID(APP_NAME);
 
 		isInitialized = true;
-	}
-
-	public static void initializeAlayticsAppender(Context context) {
-//		if (!logEnabled)
-//			return;
-//
-//		if (!isInitialized || isInitializedAnalytics)
-//			return;
-//
-//		// GoogleAnalyticsAppender
-//		GoogleAnalyticsAppender googleAppender = new GoogleAnalyticsAppender(context);
-//		logger.addAppender(googleAppender);
-//
-//		isInitializedAnalytics  = true;
 	}
 
 	static public void writeApplicationInfo(Context context) {
